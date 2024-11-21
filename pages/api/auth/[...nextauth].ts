@@ -1,5 +1,14 @@
-import NextAuth from "next-auth"
+import NextAuth, { DefaultSession } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
+
+// Extender la interfaz de Session para incluir id
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string;
+    } & DefaultSession["user"]
+  }
+}
 
 export default NextAuth({
   providers: [
@@ -10,8 +19,6 @@ export default NextAuth({
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
-        // Esta es una verificación básica. En un entorno de producción,
-        // deberías verificar contra una base de datos.
         if (credentials?.username === "admin" && credentials?.password === "password") {
           return { id: "1", name: "Admin", email: "admin@example.com" }
         }
@@ -34,10 +41,11 @@ export default NextAuth({
     },
     async session({ session, token }) {
       if (session.user) {
-        session.user.id = token.id
+        session.user.id = token.id as string
       }
       return session
     }
   },
   secret: process.env.NEXTAUTH_SECRET,
 })
+
