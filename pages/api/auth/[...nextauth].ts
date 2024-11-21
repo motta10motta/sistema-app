@@ -20,5 +20,11 @@ export default NextAuth({
       }
     })
   ],
+  // Añade esta configuración para el manejo de sesiones en el lado del servidor
+  session: {
+    strategy: "jwt",
+  },
+  // Añade una clave secreta (puedes generarla con `openssl rand -base64 32`)
+  secret: process.env.NEXTAUTH_SECRET,
 })
 
