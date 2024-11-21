@@ -7,24 +7,37 @@ export default NextAuth({
       name: 'Credentials',
       credentials: {
         username: { label: "Username", type: "text" },
-        password: {  label: "Password", type: "password" }
+        password: { label: "Password", type: "password" }
       },
-      async authorize(credentials, req) {
-        // Aquí deberías verificar las credenciales contra tu base de datos
-        // Por ahora, usaremos un usuario hardcodeado
+      async authorize(credentials) {
+        // Esta es una verificación básica. En un entorno de producción,
+        // deberías verificar contra una base de datos.
         if (credentials?.username === "admin" && credentials?.password === "password") {
-          return { id: "1", name: "Admin" }
-        } else {
-          return null
+          return { id: "1", name: "Admin", email: "admin@example.com" }
         }
+        return null
       }
     })
   ],
-  // Añade esta configuración para el manejo de sesiones en el lado del servidor
   session: {
     strategy: "jwt",
   },
-  // Añade una clave secreta (puedes generarla con `openssl rand -base64 32`)
+  pages: {
+    signIn: '/auth/signin',
+  },
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id
+      }
+      return token
+    },
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.id = token.id
+      }
+      return session
+    }
+  },
   secret: process.env.NEXTAUTH_SECRET,
 })
-
