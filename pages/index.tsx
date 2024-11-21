@@ -1,24 +1,19 @@
-import { useSession, signIn, signOut } from "next-auth/react"
+import React from 'react'
+import Header from '@/components/Header'
+import SalesForm from '@/components/SalesForm'
+import PaymentForm from '@/components/PaymentForm'
 
 export default function Home() {
-  const { data: session, status } = useSession()
-
-  if (status === "loading") {
-    return <p>Cargando...</p>
-  }
-
-  if (session) {
-    return (
-      <>
-        Signed in as {session.user?.email} <br />
-        <button onClick={() => signOut()}>Sign out</button>
-      </>
-    )
-  }
   return (
-    <>
-      Not signed in <br />
-      <button onClick={() => signIn()}>Sign in</button>
-    </>
+    <div className="min-h-screen bg-gray-100">
+      <Header />
+      <main className="container mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <SalesForm />
+          <PaymentForm />
+        </div>
+      </main>
+    </div>
   )
 }
+
